@@ -1,0 +1,383 @@
+openapi: "3.0.1"
+info:
+  title: Account Bank Service API
+  description: API to manage account banks
+  version: "1.0.0"
+  contact:
+    name: Piere Custodio
+    email: piere_07@hotmail.com
+servers:
+  - url: http://localhost:8083
+    description: Local Server
+tags:
+  - name: bankaccounts
+    description: Bank Accounts operations
+  - name: movements
+    description: Movement operations
+paths:
+  /api/bankaccounts:
+    post:
+      tags:
+        - bankaccounts
+      description: Opening a new account bank
+      summary: Opening an account bank
+      operationId: createBankAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountDto'
+      responses:
+        '201':
+          description: Account bank created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/AlreadyExists'
+    put:
+      tags:
+        - bankaccounts
+      description: Update an existing account bank
+      summary: Update an account bank
+      operationId: updateBankAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountDto'
+      responses:
+        '200':
+          description: Account bank updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    get:
+      tags:
+        - bankaccounts
+      description: Use to request all account banks
+      summary: Get all account banks
+      operationId: findAllBankAccounts
+      responses:
+        '200':
+          description: A list of account banks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankAccountDto'
+    delete:
+      tags:
+        - bankaccounts
+      description: Delete an existing account bank
+      summary: Delete an account bank
+      operationId: delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountDto'
+      responses:
+        '200':
+          description: Account bank deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/bankaccounts/deposit/{id}:
+    post:
+      tags:
+        - bankaccounts
+      summary: Deposit to a bank account
+      description: Deposit to a bank account
+      operationId: deposit
+      parameters:
+        - name: id
+          in: path
+          description: Id of the bank account
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OperationDto'
+      responses:
+        '200':
+          description: Depósito realizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDto'
+  /api/bankaccounts/withdraw/{id}:
+    post:
+      tags:
+        - bankaccounts
+      summary: Withdraw from a bank account
+      description: Withdraw from a bank account
+      operationId: withdraw
+      parameters:
+        - name: id
+          in: path
+          description: ID of the bank account
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OperationDto'
+      responses:
+        '200':
+          description: Retiro realizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDto'
+        '400':
+          $ref: '#/components/responses/InsuficientFunds'
+  /api/bankaccounts/checkbalance/{id}:
+    get:
+      tags:
+        - bankaccounts
+      summary: Check balance of a bank account
+      description: Check balance of a bank account
+      operationId: checkBalance
+      parameters:
+        - name: id
+          in: path
+          description: ID of the bank account
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Balance consultado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDto'
+  /api/movements:
+    post:
+      tags:
+        - movements
+      description: Create a new movement
+      summary: Create a movement
+      operationId: createMovement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovementDto'
+      responses:
+        '201':
+          description: Movement created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovementDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    put:
+      tags:
+        - movements
+      description: Update an existing movement
+      summary: Update a movement
+      operationId: updateMovement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovementDto'
+      responses:
+        '200':
+          description: Movement updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovementDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    get:
+      tags:
+        - movements
+      description: Use to request all movements
+      summary: Get all movements
+      operationId: findAllMovements
+      responses:
+        '200':
+          description: A list of movements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovementDto'
+    delete:
+      tags:
+        - movements
+      description: Delete an existing movement
+      summary: Delete a movement
+      operationId: deleteMovement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovementDto'
+      responses:
+        '200':
+          description: Movement deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovementDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+components:
+  responses:
+      NotFound:
+        description: Not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Not found
+      AlreadyExists:
+        description: already exists
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Already exists
+      BadRequest:
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Bad request
+      InsuficientFunds:
+        description: Insuficient funds
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Insuficient funds
+  schemas:
+    BankAccountDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Account Bank ID
+        bankAccountType:
+          type: string
+          description: Account Bank Type
+          enum:
+            - AHORRO
+            - CORRIENTE
+            - PLAZO FIJO
+        balance:
+          type: number
+          format: double
+          description: Account Bank Balance
+        clientId:
+          type: string
+          description: ID of the client
+        movements:
+          type: array
+          description: Account Bank Movements
+          items:
+            $ref: '#/components/schemas/MovementDto'
+        limitMovement:
+          type: number
+          description: Movement limit
+        maintenance:
+          type: number
+          format: double
+          description: Maintenance
+          pattern: '^[0-9]{8}$'
+        createAt:
+          type: string
+          description: Account Bank creation date
+          format: date
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+        endAt:
+          type: string
+          description: Account Bank end date
+          format: date
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+        status:
+          type: boolean
+          description:  Account Bank status
+    MovementDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the movement
+        createAt:
+          type: string
+          description: Date of the movement
+          format: date
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+        amount:
+          type: number
+          format: double
+          description: Amount of the movement
+        movementType:
+          type: string
+          description: Type of movement
+          enum:
+            - DEPOSITO
+            - RETIRO
+        description:
+          type: string
+          description: Description of the movement
+    OperationDto:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+          description: Amount of the operation
