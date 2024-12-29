@@ -28,7 +28,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Document(collection="bank_accounts")
+@Document(collection = "bank_accounts")
 public class BankAccount implements Serializable {
 
     private static final long serialVersionUID = 1L;

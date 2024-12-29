@@ -22,7 +22,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Document(collection="movements")
+@Document(collection = "movements")
 public class Movement implements Serializable {
     
     private static final long serialVersionUID = 1L;

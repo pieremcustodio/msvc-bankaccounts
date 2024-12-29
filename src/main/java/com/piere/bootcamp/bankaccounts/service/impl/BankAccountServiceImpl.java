@@ -39,7 +39,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return accountBankDao.findById(bankAccountDto.getId())
         .switchIfEmpty(Mono.error(new RuntimeException("Cuenta bancaria no encontrada")))
         .flatMap(account -> {
-            if(account.getBalance() > 0) {
+            if (account.getBalance() > 0) {
                 return Mono.error(new RuntimeException("No se puede eliminar la cuenta bancaria porque tiene saldo"));
             }
             return accountBankDao.delete(account);
