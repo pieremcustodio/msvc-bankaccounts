@@ -36,6 +36,9 @@ public class BankAccount implements Serializable {
     @Id
     private String id;
 
+    @Field(name = "account_code")
+    private String accountCode;
+
     @Field(name = "bank_account_type")
     private BankAccountTypeEnum bankAccountType;
 

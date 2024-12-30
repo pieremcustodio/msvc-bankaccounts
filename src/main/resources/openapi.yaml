@@ -14,6 +14,10 @@ tags:
     description: Bank Accounts operations
   - name: movements
     description: Movement operations
+  - name: transfers
+    description: Transfer operations
+  - name: reports
+    description: Report operations
 paths:
   /api/bankaccounts:
     post:
@@ -260,6 +264,76 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+  /api/transfers/internal/{accountCode}:
+    post:
+      tags:
+        - transfers
+      summary: Transfer between accounts
+      description: Transfer between accounts
+      operationId: transfer
+      parameters:
+        - name: accountCode
+          in: path
+          description: Account code of the bank account
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OperationDto'
+      responses:
+        '200':
+          description: Transfer made
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDto'
+        '400':
+          $ref: '#/components/responses/InsuficientFunds'
+  /api/reports/calculateAverageDailyBalance:
+    post:
+      tags:
+        - reports
+      summary: Check diary balance of client's account
+      description: Check diary balance of client's account
+      operationId: checkBalanceClient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchReportDto'
+      responses:
+        '200':
+          description: Balance consulted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportProjection'
+  /api/reports/calculeCommisionByProduct:
+    get:
+      tags:
+        - reports
+      summary: Check commision of a client's account
+      description: Check commision of a client's account
+      operationId: checkCommisionClient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchReportDto'
+      responses:
+        '200':
+          description: Commision consulted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportProjection'
+
     
 components:
   responses:
@@ -310,6 +384,9 @@ components:
         id:
           type: string
           description: Account Bank ID
+        accountCode:
+          type: number
+          description: Account Bank Code
         bankAccountType:
           type: string
           description: Account Bank Type
@@ -371,6 +448,8 @@ components:
           enum:
             - DEPOSITO
             - RETIRO
+            - COMISION
+            - TRANSFERENCIA
         description:
           type: string
           description: Description of the movement
@@ -381,3 +460,34 @@ components:
           type: number
           format: double
           description: Amount of the operation
+        fromAccountCode:
+          type: number
+          description: Account code of the bank account that will make the operation
+        toAccountCode:
+          type: number
+          description: Account code of the bank account that will receive the operation
+    SearchReportDto:
+      type: object
+      properties:
+        clientId:
+          type: string
+          description: ID of the client
+        startDate:
+          type: string
+          description: Start date of the report
+          format: date
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+        endDate:
+          type: string
+          description: End date of the report
+          format: date
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+    ReportProjection:
+      type: object
+      properties:
+        bankAccount:
+          $ref: '#/components/schemas/BankAccountDto'
+        amount:
+          type: number
+          format: double
+          description: Amount of the report

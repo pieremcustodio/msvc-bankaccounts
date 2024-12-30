@@ -9,7 +9,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum MovementTypeEnum {
     DEPOSITO("DEPOSITO"),
     
-    RETIRO("RETIRO");
+    RETIRO("RETIRO"),
+    
+    TRANSFERENCIA("TRANSFERENCIA"),
+    
+    COMISION("COMISION");
 
     private String value;
 

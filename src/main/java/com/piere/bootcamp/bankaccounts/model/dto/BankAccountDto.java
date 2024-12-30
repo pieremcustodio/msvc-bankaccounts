@@ -40,6 +40,8 @@ public class BankAccountDto implements Serializable {
 
   private String id;
 
+  private String accountCode;
+
   private BankAccountTypeEnum bankAccountType;
 
   private Double balance;
@@ -74,6 +76,7 @@ public class BankAccountDto implements Serializable {
   public BankAccountDto toDto(BankAccount bankAccount) {
     return BankAccountDto.builder()
       .id(bankAccount.getId())
+      .accountCode(bankAccount.getAccountCode())
       .bankAccountType(bankAccount.getBankAccountType())
       .balance(bankAccount.getBalance())
       .clientId(bankAccount.getClientId())
@@ -89,6 +92,7 @@ public class BankAccountDto implements Serializable {
   public BankAccount toEntity(BankAccountDto bankAccountDto) {
     return BankAccount.builder()
       .id(bankAccountDto.getId())
+      .accountCode(bankAccountDto.getAccountCode())
       .bankAccountType(bankAccountDto.getBankAccountType())
       .balance(bankAccountDto.getBalance())
       .clientId(bankAccountDto.getClientId())

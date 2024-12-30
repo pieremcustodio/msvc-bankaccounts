@@ -71,6 +71,21 @@ public class BankAccountServiceImpl implements BankAccountService {
         return accountBankDao.findById(id)
                 .switchIfEmpty(Mono.error(new RuntimeException("Cuenta bancaria no encontrada")))
                 .flatMap(account -> {
+                    double finalAmount = amount;
+                    if (account.getLimitMovement() == 0) {
+                        double commission = account.getMaintenance();
+                        finalAmount -= commission;
+                    }
+
+                    if (account.getBalance() < finalAmount) {
+                        return Mono.error(new RuntimeException("Saldo insuficiente para realizar el deposito"));
+                    }
+
+                    account.setBalance(account.getBalance() + finalAmount);
+                    if (account.getLimitMovement() > 0) {
+                        account.setLimitMovement(account.getLimitMovement() - 1);
+                    }
+
                     return movementService.create(MovementDto.builder()
                             .amount(amount)
                             .movementType(MovementTypeEnum.DEPOSITO)
@@ -90,16 +105,28 @@ public class BankAccountServiceImpl implements BankAccountService {
         return accountBankDao.findById(id)
                 .switchIfEmpty(Mono.error(new RuntimeException("Cuenta bancaria no encontrada")))
                 .flatMap(account -> {
-                    if (account.getBalance() < amount) {
+                    double finalAmount = amount;
+
+                    if (account.getLimitMovement() == 0) {
+                        double commission = account.getMaintenance();
+                        finalAmount += commission;
+                    }
+
+                    if (account.getBalance() < finalAmount) {
                         return Mono.error(new RuntimeException("Saldo insuficiente para realizar el retiro"));
                     }
+
+                    account.setBalance(account.getBalance() - finalAmount);
+                    if (account.getLimitMovement() > 0) {
+                        account.setLimitMovement(account.getLimitMovement() - 1);
+                    }
+
                     return movementService.create(MovementDto.builder()
-                            .amount(amount)
+                            .amount(finalAmount)
                             .movementType(MovementTypeEnum.RETIRO)
                             .description("Retiro realizado")
                             .build())
                             .flatMap(movement -> {
-                                account.setBalance(account.getBalance() - amount);
                                 account.getMovementIds().add(movement.getId());
                                 return accountBankDao.save(account);
                             });
