@@ -1,6 +1,8 @@
 package com.piere.bootcamp.bankaccounts.service;
 
 
+import java.util.List;
+
 import com.piere.bootcamp.bankaccounts.model.dto.BankAccountDto;
 
 import reactor.core.publisher.Flux;
@@ -23,4 +25,6 @@ public interface BankAccountService {
     Mono<BankAccountDto> checkBalance(String id);
     
     Flux<BankAccountDto> findAll();
+
+    Flux<BankAccountDto> findAllByIdList(List<String> idList);
 }

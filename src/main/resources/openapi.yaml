@@ -18,6 +18,8 @@ tags:
     description: Transfer operations
   - name: reports
     description: Report operations
+  - name: debitcards
+    description: Debit Card operations
 paths:
   /api/bankaccounts:
     post:
@@ -333,8 +335,191 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReportProjection'
-
-    
+  /api/debitcards:
+    post:
+      tags:
+        - debitcards
+      description: Create a new debit card
+      summary: Create a debit card
+      operationId: createDebitCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebitCardDto'
+      responses:
+        '201':
+          description: Debit card created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebitCardDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/AlreadyExists'
+    put:
+      tags:
+        - debitcards
+      description: Update an existing debit card
+      summary: Update a debit card
+      operationId: updateDebitCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebitCardDto'
+      responses:
+        '200':
+          description: Debit card updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebitCardDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    get:
+      tags:
+        - debitcards
+      description: Use to request all debit cards
+      summary: Get all debit cards
+      operationId: findAllDebitCards
+      responses:
+        '200':
+          description: A list of debit cards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DebitCardDto'
+    delete:
+      tags:
+        - debitcards
+      description: Delete an existing debit card
+      summary: Delete a debit card
+      operationId: deleteDebitCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebitCardDto'
+      responses:
+        '200':
+          description: Debit card deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebitCardDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /api/debitcards/withdraw/{id}:
+    post:
+      tags:
+        - debitcards
+      summary: Withdraw from a debit card
+      description: Withdraw from a debit card
+      operationId: withdrawDebitCard
+      parameters:
+        - name: id
+          in: path
+          description: ID of the debit card
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OperationDto'
+      responses:
+        '200':
+          description: Retiro realizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebitCardDto'
+        '400':
+          $ref: '#/components/responses/InsuficientFunds'
+  /api/debitcards/checkbalance/{id}:
+    get:
+      tags:
+        - debitcards
+      summary: Check balance of a debit card
+      description: Check balance of a debit card
+      operationId: checkBalanceDebitCard
+      parameters:
+        - name: id
+          in: path
+          description: ID of the debit card
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Balance consultado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebitCardDto' 
+  /api/debitcards/findLastTenMovements/{id}:
+    get:
+      tags:
+        - debitcards
+      summary: Find last 10 movements of a debit card
+      description: Find last 10 movements of a debit card
+      operationId: findLast10Movements
+      parameters:
+        - name: id
+          in: path
+          description: ID of the debit card
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Movements consulted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovementDto'
+  /api/debitcards/payment/{id}:
+    post:
+      tags:
+        - debitcards
+      summary: Payment with a debit card
+      description: Payment with a debit card
+      operationId: payment
+      parameters:
+        - name: id
+          in: path
+          description: ID of the debit card
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OperationDto'
+      responses:
+        '200':
+          description: Pago realizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebitCardDto'
+        '400':
+          $ref: '#/components/responses/InsuficientFunds'
 components:
   responses:
       NotFound:
@@ -453,6 +638,33 @@ components:
         description:
           type: string
           description: Description of the movement
+    DebitCardDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the debit card
+        clientId:
+          type: string
+          description: ID of the client
+        mainAccountId:
+          type: string
+          description: Main account ID
+        expirationDate:
+          type: string
+          description: Expiration date of the debit card
+          format: date
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+        createAt:
+          type: string
+          description: Debit card creation date
+          format: date
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+        endAt:
+          type: string
+          description: Debit card end date
+          format: date
+          pattern: '^\\d{4}-\\d{2}-\\d{2}$'
     OperationDto:
       type: object
       properties:

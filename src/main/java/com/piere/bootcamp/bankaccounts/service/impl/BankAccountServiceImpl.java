@@ -1,5 +1,7 @@
 package com.piere.bootcamp.bankaccounts.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -137,6 +139,12 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public Mono<BankAccountDto> findById(String id) {
         return accountBankDao.findById(id)
+            .map(BankAccountDto.build()::toDto);
+    }
+
+    @Override
+    public Flux<BankAccountDto> findAllByIdList(List<String> idList) {
+        return accountBankDao.findAllById(idList)
             .map(BankAccountDto.build()::toDto);
     }
 }
